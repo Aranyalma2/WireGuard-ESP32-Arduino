@@ -83,6 +83,9 @@ bool WireGuard::begin(const IPAddress& localIP, const IPAddress& Subnet, const I
         return false;
     }
 
+    // Initialize the platform
+    wireguard_platform_init();
+
     // Register the new WireGuard network interface with lwIP
     LOCK_TCPIP_CORE();
     _wg_netif = netif_add(&_wg_netif_struct, ip_2_ip4(&ipaddr), ip_2_ip4(&netmask), ip_2_ip4(&gateway), &wg, &wireguardif_init, &ip_input);
@@ -108,8 +111,6 @@ bool WireGuard::begin(const IPAddress& localIP, const IPAddress& Subnet, const I
 
     peer.endport_port = remotePeerPort;
 
-    // Initialize the platform
-    wireguard_platform_init();
     LOCK_TCPIP_CORE();
     // Register the new WireGuard peer with the network interface
     wireguardif_add_peer(_wg_netif, &peer, &_wireguard_peer_index);
